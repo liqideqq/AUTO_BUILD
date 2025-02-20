@@ -45,14 +45,14 @@ jobs:
 
       - name: 3.安装KSUN
         run: |
-          cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
+          cd $GITHUB_WORKSPACE/kernel_workspace/android13-5.15-2025-01
           curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next-susfs/kernel/setup.sh" | bash -s next-susfs
 
       - name: 4.集成KSU
         run: |
           ls
           echo "进入源码目录"
-          cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
+          cd $GITHUB_WORKSPACE/kernel_workspace/android13-5.15-2025-01
           cp $GITHUB_WORKSPACE/kernel_workspace/src/patches/* .
           patch -p1 < new_defconfig.patch
           patch -p1 < non-kprobes.patch
@@ -62,7 +62,7 @@ jobs:
         run: |
           if [ ${{ inputs.susfs }} = true ]; then
             echo "选择集成susfs"
-            cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
+            cd $GITHUB_WORKSPACE/kernel_workspace/android13-5.15-2025-01
             echo "复制susfs/kernel_patches/fs/* 的内容"
             cp $GITHUB_WORKSPACE/kernel_workspace/susfs/kernel_patches/fs/* ./fs/
             echo "复制susfs/kernel_patches/include/linux/* 的内容"
@@ -83,7 +83,7 @@ jobs:
           echo "Updated PATH: $PATH"
           clang --version
           
-          cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
+          cd $GITHUB_WORKSPACE/kernel_workspace/android13-5.15-2025-01
           # 自定义版本
           if [ ! -z ${{ inputs.version }} ]; then
             echo "不为空"
@@ -106,7 +106,7 @@ jobs:
       
       - name: 7.查看成果
         run: |
-            cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel/out/arch/arm64/boot
+            cd $GITHUB_WORKSPACE/kernel_workspace/android13-5.15-2025-01/out/arch/arm64/boot
             ls
             strings Image | grep "Linux version"
             cp Image $GITHUB_WORKSPACE/kernel_workspace/src/Anykernel/
