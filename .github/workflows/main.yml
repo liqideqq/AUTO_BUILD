@@ -1,16 +1,15 @@
 name: 编译KSUN——SUS内核
-run-name: ${{ github.actor }} 正在编译 骁龙865 小米系列内核！🚀 🚀
+run-name: ${{ github.actor }} 正在编译 骁龙8gen2 小米系列内核！🚀 🚀
 on:
   workflow_dispatch:
     inputs:
       phone:
         description: '选择手机型号：'
         required: true
-        default: '小米10'
+        default: 'Redmi K70'
         type: choice
         options:
-          - 小米10
-          - 小米10pro
+          - Redmi K70
       susfs:
         description: '是否集成SUSFS'
         required: true
@@ -40,9 +39,9 @@ jobs:
       - name: 2.克隆源码与补丁
         run: |
           cd $GITHUB_WORKSPACE/kernel_workspace
-          git clone https://github.com/jhchong94/kernel_xiaomi_sm8250_n0kernel --depth=1 android_kernel
+          git clone https://github.com/hfdem/android_gki_kernel_5.15_common --depth=1 android13-5.15-2025-01
           git clone https://github.com/zzh20188/AUTO_BUILD.git src
-          git clone https://gitlab.com/simonpunk/susfs4ksu.git -b kernel-4.19 --depth=1 susfs
+          git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-android13-5.15 --depth=1 susfs
 
       - name: 3.安装KSUN
         run: |
@@ -69,9 +68,9 @@ jobs:
             echo "复制susfs/kernel_patches/include/linux/* 的内容"
             cp $GITHUB_WORKSPACE/kernel_workspace/susfs/kernel_patches/include/linux/* ./include/linux/
             echo "复制susfs内核源码补丁"
-            cp $GITHUB_WORKSPACE/kernel_workspace/susfs/kernel_patches/50_add_susfs_in_kernel-4.19.patch .
+            cp $GITHUB_WORKSPACE/kernel_workspace/susfs/kernel_patches/50_add_susfs_in_gki-android13-5.15.patch .
             echo "执行susfs补丁"
-            patch -p1 < 50_add_susfs_in_kernel-4.19.patch || true
+            patch -p1 < 50_add_susfs_in_gki-android13-5.15.patch || true
             echo "修复"
             patch -p1 < after_patch_fix.patch            
           else
@@ -93,12 +92,9 @@ jobs:
             echo "字符串为空"
           fi
 
-          if [ ${{ inputs.phone }} = '小米10' ]; then
-            echo "选择小米10配置"
+          if [ ${{ inputs.phone }} = 'Redmi K70' ]; then
+            echo "选择Redmi K70配置"
             DEFCONFIG=vendor/umi_defconfig
-          elif [ ${{ inputs.phone }} = '小米10pro' ]; then
-            echo "选择小米10pro配置"
-            DEFCONFIG=vendor/cmi_defconfig
           else
             echo "非法内容"
           fi
